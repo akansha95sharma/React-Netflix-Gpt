@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import Header from './Header'
-import {useNavigate} from "react-router-dom";
 import { useState } from 'react';
 import {checkValidData} from '../utils/validate';
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
@@ -8,6 +7,7 @@ import {auth} from "../utils/firebase";
 import { updateProfile } from "firebase/auth";
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { BACKGROUND_IMAGE, USER_AVATAR } from '../utils/constants';
 
 const Login = () => {
 
@@ -15,7 +15,6 @@ const Login = () => {
     const email = useRef(null);
     const name = useRef(null);
     const password = useRef(null);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [errorMessage,setErrorMessage] = useState(null);
     const toggleSignInForm = () => {
@@ -41,14 +40,13 @@ const Login = () => {
                 const user = userCredential.user;
                 console.log(user);
                 updateProfile(user, {
-                    displayName: name.current.value, photoURL: "https://avatars.githubusercontent.com/u/35160663?v=4"
+                    displayName: name.current.value, photoURL: USER_AVATAR
                   }).then(() => {
                     // Profile updated!
                     // ...
                     const {uid,email,displayName,photoURL} = auth.currentUser;
                     // ...
                     dispatch(addUser({uid:uid, email: email, displayName: displayName,photoURL:photoURL}));
-                    navigate("/browse");
                   }).catch((error) => {
                     setErrorMessage(error.message);
                   });
@@ -70,8 +68,6 @@ const Login = () => {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-                console.log(user);
-                navigate("/browse");
                 // ...
             })
             .catch((error) => {
@@ -86,7 +82,7 @@ const Login = () => {
         <div>
         <Header />
         <div className='absolute'>
-            <img src='https://assets.nflxext.com/ffe/siteui/vlv3/21a8ba09-4a61-44f8-8e2e-70e949c00c6f/6678e2ea-85e8-4db2-b440-c36547313109/IN-en-20240722-POP_SIGNUP_TWO_WEEKS-perspective_WEB_3457a8b1-284d-4bb5-979e-2a2e9bb342b3_large.jpg' alt='logo' />
+            <img src={BACKGROUND_IMAGE} alt='logo' />
         </div>
         <form onSubmit={(e)=> e.preventDefault()} className='absolute p-12 bg-black w-3/12 my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80'>
             <h1 className='font-bold text-3xl py-4'>{isSignInForm ? "Sign In" : "Sign Up"}</h1>
